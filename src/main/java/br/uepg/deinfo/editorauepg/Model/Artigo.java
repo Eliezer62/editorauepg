@@ -37,6 +37,9 @@ public class Artigo
      * @param publicado Se o artigo jah foi publicado
      */
 
+     //Esse constructor existe por causa do javabeans
+    public Artigo(){}
+
     public Artigo(String titulo, String resumo, boolean publicado)
     {
         this.titulo = titulo;
