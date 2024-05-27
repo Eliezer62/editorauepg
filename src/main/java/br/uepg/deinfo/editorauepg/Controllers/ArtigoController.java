@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +54,20 @@ public class ArtigoController
         else 
             return new ResponseEntity<List<Artigo>>(ListaArtigos, HttpStatus.OK);
     }
+
+
+    @GetMapping("/artigos/{id}")
+    public ResponseEntity<Artigo> getArtigobyId(@PathVariable Long id) 
+    {
+        Optional<Artigo> artigo = rep.findById(id);
+        if(!artigo.isPresent())
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(artigo.get(), HttpStatus.OK);
+    }
+    
     /**
      * Post para salvar artigos no banco
      * 
@@ -61,16 +76,16 @@ public class ArtigoController
      */
     
     @PostMapping("/artigos")
-    public ResponseEntity postArtigos( @RequestBody Artigo artigo) 
+    public ResponseEntity<Artigo> postArtigos( @RequestBody Artigo artigo) 
     {
         try
         {
-            rep.save(artigo);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            Artigo salvo = rep.save(artigo);
+            return new ResponseEntity<>(salvo,HttpStatus.CREATED);
         }
         catch(RuntimeException en)
         {
-            return new ResponseEntity<>("Erro na requisicao",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch(Exception en)
         {
@@ -79,8 +94,8 @@ public class ArtigoController
     }
 
     @PutMapping("/artigos/{id}")
-    public ResponseEntity putArtigo(@PathVariable String id, @RequestBody Artigo ant) {
-        Optional<Artigo> artigo = rep.findById(Long.parseLong(id));
+    public ResponseEntity<Artigo> putArtigo(@PathVariable Long id, @RequestBody Artigo ant) {
+        Optional<Artigo> artigo = rep.findById(id);
         if(artigo.isPresent())
         {
             Artigo copia = artigo.get();
@@ -92,5 +107,20 @@ public class ArtigoController
         
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
+
+    @DeleteMapping("/artigos")
+    public ResponseEntity<HttpStatus> deleteAllArtigo()
+    {
+        rep.deleteAll();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    @DeleteMapping("/artigos/{id}")
+    public ResponseEntity<HttpStatus> deleteArtigo(@PathVariable Long id)
+    {
+        rep.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }    
 }

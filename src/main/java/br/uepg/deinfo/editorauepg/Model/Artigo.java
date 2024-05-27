@@ -48,6 +48,11 @@ public class Artigo
     }
 
 
+    public Long getId(){
+        return this.id;
+    }
+
+
     //getters e setters
     public String getTitulo() {
         return this.titulo;
